@@ -1,0 +1,23 @@
+<!-- Save this as templates/edit_car.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Car</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>🚗 Edit Car Details</h1>
+    <form method="POST" class="car-form">
+      <input type="text" name="username" placeholder="User Name" value="{{ car[1] }}" required>
+      <input type="text" name="make" placeholder="Car Make" value="{{ car[2] }}" required>
+      <input type="text" name="model" placeholder="Model" value="{{ car[3] }}" required>
+      <input type="number" name="year" placeholder="Year" value="{{ car[4] }}" required>
+      <input type="text" name="regno" placeholder="Registration Number" value="{{ car[5] }}" required>
+      <button type="submit">Update Car</button>
+    </form>
+    <a href="/">Back to Car List</a>
+  </div>
+</body>
+</html>

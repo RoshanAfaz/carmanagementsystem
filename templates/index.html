@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Car Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Embedded CSS for dynamic effects */
+        :root {
+            --gradient-primary: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+            --gradient-secondary: linear-gradient(-45deg, #ff6a88, #ff6a88, #6a11cb, #2575fc);
+            --btn-primary-gradient: linear-gradient(to right, #ff6a88, #ee0979);
+        }
+
+        body {
+            background: var(--gradient-secondary);
+            background-size: 400% 400%;
+            animation: GradientBackground 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes GradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        .car-form input {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .car-form input:focus {
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+            transform: scale(1.02);
+        }
+
+        button {
+            background: var(--btn-primary-gradient);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .car-list table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .car-list th, .car-list td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .edit-btn, .delete-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 0 5px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .delete-btn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        .edit-btn:hover, .delete-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(2px);
+            animation: ParticleFloat 10s linear infinite;
+        }
+
+        @keyframes ParticleFloat {
+            0% { 
+                transform: translate(0, 0) scale(0.5);
+                opacity: 0.2;
+            }
+            50% { 
+                transform: translate(100px, 50px) scale(1.2);
+                opacity: 0.5;
+            }
+            100% { 
+                transform: translate(-100px, -50px) scale(0.7);
+                opacity: 0.1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particle-bg"></div>
+    <div class="container">
+        <h1>🚗 Car Management System</h1>
+        <form method="POST" action="/add" class="car-form">
+            <input type="text" name="username" placeholder="User Name" required>
+            <input type="text" name="make" placeholder="Car Make" required>
+            <input type="text" name="model" placeholder="Model" required>
+            <input type="number" name="year" placeholder="Year" required>
+            <input type="text" name="regno" placeholder="Registration Number" required>
+            <button type="submit">Add Car</button>
+        </form>
+        <div class="car-list">
+            <table>
+                <tr>
+                    <th>User Name</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Registration</th>
+                    <th>Action</th>
+                </tr>
+                {% for car in cars %}
+                <tr>
+                    <td>{{ car[1] }}</td>
+                    <td>{{ car[2] }}</td>
+                    <td>{{ car[3] }}</td>
+                    <td>{{ car[4] }}</td>
+                    <td>{{ car[5] }}</td>
+                    <td>
+                        <a class="edit-btn" href="/edit/{{ car[0] }}">Edit</a>
+                        <a class="delete-btn" href="/delete/{{ car[0] }}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Embedded JavaScript for dynamic interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Particle Background Generation
+            function createParticleBackground() {
+                const particleBg = document.querySelector('.particle-bg');
+                const particleCount = 100;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Randomize particle properties
+                    const size = Math.random() * 15 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Random starting position
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    
+                    // Randomize animation duration and delay
+                    particle.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                    particle.style.animationDelay = `${Math.random() * 5}s`;
+                    
+                    particleBg.appendChild(particle);
+                }
+            }
+
+            // Input Field Dynamic Effects
+            function addInputDynamicEffects() {
+                const inputs = document.querySelectorAll('.car-form input');
+                
+                inputs.forEach(input => {
+                    input.addEventListener('focus', () => {
+                        input.style.transform = 'scale(1.02)';
+                        input.style.boxShadow = '0 0 15px rgba(255,255,255,0.3)';
+                    });
+                    
+                    input.addEventListener('blur', () => {
+                        input.style.transform = 'scale(1)';
+                        input.style.boxShadow = 'none';
+                    });
+                });
+            }
+
+            // Dynamic Gradient Background Color Rotation
+            function rotateDynamicGradient() {
+                const root = document.documentElement;
+                let angle = 0;
+                
+                setInterval(() => {
+                    angle = (angle + 1) % 360;
+                    root.style.setProperty('--gradient-secondary', 
+                        `linear-gradient(${angle}deg, #ff6a88, #ff6a88, #6a11cb, #2575fc)`
+                    );
+                }, 50);
+            }
+
+            // Initialize all dynamic effects
+            function initializeDynamicEffects() {
+                createParticleBackground();
+                addInputDynamicEffects();
+                rotateDynamicGradient();
+            }
+
+            // Run initialization
+            initializeDynamicEffects();
+
+            // Recreate effects on window resize
+            window.addEventListener('resize', () => {
+                // Remove existing particle background
+                const existingParticleBg = document.querySelector('.particle-bg');
+                existingParticleBg.innerHTML = '';
+                
+                // Reinitialize effects
+                initializeDynamicEffects();
+            });
+        });
+    </script>
+</body>
+</html>
+```
